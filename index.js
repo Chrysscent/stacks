@@ -1,5 +1,4 @@
 import "dotenv/config";
-import axios from "axios";
 import bodyParser from "body-parser";
 import express from "express";
 import pg from "pg";
@@ -11,7 +10,11 @@ if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL is required. Set it in your .env file.");
 }
 
-const db = new pg.Pool({ connectionString: process.env.DATABASE_URL });
+const db = new pg.Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false },
+  max: 3,
+});
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
@@ -169,9 +172,13 @@ app.delete("/delete-genre/:id", async (req, res) => {
   res.json(result.rows[0]);
 });
 
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
-});
+if (process.env.VERCEL) {
+  module.exports = app;
+} else {
+  app.listen(port, () => {
+    console.log(`Server running on http://localhost:${port}`);
+  });
+}
 
 const shutdown = async (signal) => {
   console.log(`Received ${signal}. Draining database pool connection cache...`);
