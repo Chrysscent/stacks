@@ -177,6 +177,7 @@ genreList.addEventListener("click", async (event) => {
       : `${name} was removed.`,
   );
   genreChipsContainer.querySelector(`button[name="${name}"]`).remove();
+  genreChipsContainer.querySelector(`button[name="all"]`).classList.add("active");
   formGenresWrapper.querySelector(`button[name="${name}"]`).remove();
   uiRenderer();
 });
