@@ -56,7 +56,6 @@ bookForm.addEventListener("submit", async (event) => {
   book["genreIds"] = data.getAll("genreIds[]");
   delete book["genreIds[]"];
   const result = await updateBooks(book, action);
-  console.log(result.errorMsg);
   if (result.errorMsg) {
     showToast(
       "error",
@@ -779,6 +778,11 @@ function debounce(func, delay) {
 function updateHeroBook(book) {
   if (document.querySelector(".genre-js.active" !== "all")) return;
 
+  if (!book) {
+    document.getElementById("hero-book-container-js").remove();
+    return;
+  }
+
   const heroBookImg = document.getElementById("hero-book-image-js");
   const heroBookImgError = document.getElementById("hero-book-img-error-js");
   const heroBookTitle = document.getElementById("hero-book-title-js");
@@ -870,7 +874,7 @@ async function uiRenderer(update = false, genre = null, order = null) {
         <div class="hero-book">
           <div class="hero-book-cover">
             <img id="hero-book-image-js" src="https://covers.openlibrary.org/b/isbn/${books[0].isbn}-L.jpg?default=false" alt="${books[0].title}" />
-            <div class="img-error-js hero-book-img-error">
+            <div id="hero-book-img-error-js" class="img-error-js hero-book-img-error">
               <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
                 <path
                   d="M8 8.5C14.5 7.5 20 9 24 13v27c-4-4-9.5-5.5-16-4.5v-27Z"
@@ -926,7 +930,7 @@ async function uiRenderer(update = false, genre = null, order = null) {
 
   if (update) updateStats(metadata);
   if (update) updateGenres(genres);
-  if (books.length > 0 && update && !query) updateHeroBook(books[0]);
+  if (update && !query) updateHeroBook(books[0]);
   generateBooks(books);
 }
 
