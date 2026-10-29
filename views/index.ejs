@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Lora:ital,wght@0,400..700;1,400..700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <title>Stacks</title>
+  </head>
+  <body>
+    <div id="page-container-js" class="page-container">
+      <div id="toast-region-js" class="toast-region"></div>
+      <header>
+        <nav class="navbar">
+          <div class="logo">
+            <svg
+              width="28"
+              height="28"
+              viewBox="0 0 28 28"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect x="4" y="6" width="20" height="4" rx="1" fill="var(--gold)" />
+              <rect x="4" y="13" width="15" height="4" rx="1" fill="var(--plum)" />
+              <rect x="4" y="20" width="18" height="4" rx="1" fill="var(--gold-light)" />
+            </svg>
+            <span class="logo-text">Stacks</span>
+          </div>
+          <div class="search-container">
+            <svg
+              class="search-icon"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+            <input
+              id="search-input-js"
+              class="search-bar"
+              value=""
+              placeholder="Search title or author…"
+            />
+            <button aria-label="Clear search" id="cancel-search-btn-js" class="cancel-search-btn">✕</button>
+          </div>
+          <div class="spacer"></div>
+          <button class="add-book-btn-js add-book-btn">
+            <span>+</span>
+            <span>Add Book</span>
+          </button>
+        </nav>
+      </header>
+
+      <main class="container">
+        <div class="stats-grid">
+          <div class="stat-box">
+            <span class="stat-orb" aria-hidden="true"></span>
+            <p class="stat-label">Books Read</p>
+            <p class="book-count-stat-js stat-value"><%= metadata.bookCount %></p>
+          </div>
+          <div class="stat-box">
+            <span class="stat-orb" aria-hidden="true"></span>
+            <p class="stat-label">Avg Rating</p>
+            <p class="avg-rating-stat-js stat-value"><%= metadata.approxAvgRating %><span class="filled">★</span></p>
+          </div>
+          <div class="stat-box">
+            <span class="stat-orb" aria-hidden="true"></span>
+            <p class="stat-label">Pages Turned</p>
+            <p class="pages-turned-stat-js stat-value"><%= metadata.pagesTurned %></p>
+          </div>
+          <div class="stat-box">
+            <span class="stat-orb" aria-hidden="true"></span>
+            <p class="stat-label">This Year</p>
+            <p class="this-year-stat-js stat-value"><%= metadata.thisYear %></p>
+          </div>
+        </div>
+        <% if (books.length > 0) { %>
+          <div id="hero-book-container-js" class="hero-book-container show">
+            <div class="hero-glow">
+              <div class="hero-orb-1"></div>
+              <div class="hero-orb-2"></div>
+            </div>
+            <div class="hero-book">
+              <div class="hero-book-cover">
+                <img id="hero-book-image-js" src="https://covers.openlibrary.org/b/isbn/<%= books[0].isbn%>-L.jpg?default=false" alt="<%= books[0].title %>" />
+                <div id="hero-book-img-error-js" class="img-error-js hero-book-img-error">
+                  <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+                    <path
+                      d="M8 8.5C14.5 7.5 20 9 24 13v27c-4-4-9.5-5.5-16-4.5v-27Z"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M40 8.5C33.5 7.5 28 9 24 13v27c4-4 9.5-5.5 16-4.5v-27Z"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M13 15c3.5 0 6 .8 8 2.4M35 15c-3.5 0-6 .8-8 2.4"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      opacity="0.55"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <div class="hero-book-details">
+                <span class="hero-book-label">Recently Read</span>
+                <h2 id="hero-book-title-js" class="hero-book-title"><%= books[0].title %></h2>
+                <p id="hero-book-author-js" class="hero-book-author"><%= books[0].author %> · <%= books[0].getFormattedDate() %></p>
+                <div id="hero-star-rating-js" class="hero-star-rating">
+                  <% for( let i = 0; i < 5; i++ ) { %>
+                    <span class="star <%= i < books[0].rating ? "filled" : "empty" %>">★</span>
+                  <% } %>
+                </div>
+                <% if (books[0].review) {%>
+                  <p id="hero-book-review-js" class="hero-book-review">"<%= books[0].review %>"</p>
+                <% } %>
+                <button data-book-id="<%= books[0].id %>" class="hero-view-dets-btn-js hero-view-dets-btn">
+                  View Details <span>→</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        <% } %>
+        <div id="controls-container-js" class="controls-container">
+          <div>
+            <h1>My Library</h1>
+            <p class="collection-details-js collection-details"><%= metadata.bookCount  %> books</p>
+          </div>
+          <div class="controls">
+            <div class="sort-options">
+              <button id="recency" class="sort-btn-js active">recent</button>
+              <button id="rating" class="sort-btn-js">rating</button>
+              <button id="title" class="sort-btn-js">title</button>
+            </div>
+            <div class="view-options">
+              <button aria-label="Grid view" name="grid-view" class="book-shelf-view-js view active">
+                <svg
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  viewBox="0 0 16 16"
+                >
+                  <rect x="1" y="1" width="6" height="6" rx="1.5" />
+                  <rect x="9" y="1" width="6" height="6" rx="1.5" />
+                  <rect x="1" y="9" width="6" height="6" rx="1.5" />
+                  <rect x="9" y="9" width="6" height="6" rx="1.5" />
+                </svg>
+              </button>
+              <button aria-label="List view" name="list-view" class="book-shelf-view-js view">
+                <svg
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="{2.5}"
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div id="genre-chips-container-js" class="genre-chips-container">
+          <div class="genre-scroll">
+            <button name="all" class="genre-js genre active">All</button>
+          <% genres.forEach(genre => { %>
+            <button name="<%= genre.name %>" class="genre-js genre">
+              <%= genre.name %><span class="genre-count-js genre-count"><%= genre.book_count %></span>
+            </button>
+          <% }) %>
+          <button id="genre-manager-btn-js" class="genre-manager">+ Manage</button>
+          </div>
+        </div>
+        <div id="book-shelf-js" class="book-shelf <%= books.length === 0 ? "empty" : "grid-view" %>">
+          <% if (books.length !== 0) { %>
+            <% books.forEach(book => { %>
+              <button data-book-id="<%= book.id %>" class="book-js book">
+                <div class="thumbnail list-only">
+                  <img id="list-view-image-js" src="https://covers.openlibrary.org/b/isbn/<%= book.isbn%>-L.jpg?default=false" alt="<%= book.title %>" />
+                  <div class="img-error-js thumbnail-img-error">
+                    <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+                      <path
+                        d="M8 8.5C14.5 7.5 20 9 24 13v27c-4-4-9.5-5.5-16-4.5v-27Z"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M40 8.5C33.5 7.5 28 9 24 13v27c4-4 9.5-5.5 16-4.5v-27Z"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M13 15c3.5 0 6 .8 8 2.4M35 15c-3.5 0-6 .8-8 2.4"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        opacity=".55"
+                      />
+                    </svg>
+                  </div>
+                  <div class="thumbnail-spine"></div>
+                </div>
+                <div class="book-cover-wrapper grid-only">
+                  <div class="book-cover-3d">
+                    <img id="grid-view-image-js" src="https://covers.openlibrary.org/b/isbn/<%= book.isbn%>-L.jpg?default=false" alt="<%= book.title %>" />
+                    <div class="img-error-js cover-img-error">
+                      <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+                        <path
+                          d="M8 8.5C14.5 7.5 20 9 24 13v27c-4-4-9.5-5.5-16-4.5v-27Z"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M40 8.5C33.5 7.5 28 9 24 13v27c4-4 9.5-5.5 16-4.5v-27Z"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M13 15c3.5 0 6 .8 8 2.4M35 15c-3.5 0-6 .8-8 2.4"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          opacity=".55"
+                        />
+                      </svg>
+                      <span class="cover-title"><%= book.title %></span>
+                    </div>
+                    <div class="gloss-overlay"></div>
+                    <div class="rating-badge-container">
+                      <div class="rating-badge">
+                        <% for( let i = 0; i < 5; i++ ) { %>
+                          <span class="star <%= i < book.rating ? "filled" : "empty" %>">★</span>
+                        <% } %>
+                      </div>
+                    </div>
+                  </div>
+                  <% if (book.genres[0]) { %>
+                    <div class="genre-tag"><span><%= book.genres[0].name %> <%= book.genres.length > 1 ? "+" + (book.genres.length - 1) : "" %></span></div>
+                  <% } %>
+                </div>
+                <div class="book-info grid-only">
+                  <h3 class="book-title"><%= book.title %></h3>
+                  <p class="book-author"><%= book.author %></p>
+                  <div data-book-rating="<%= book.rating %>" class="star-rating">
+                    <% for( let i = 0; i < 5; i++ ) { %>
+                      <span class="star <%= i < book.rating ? "filled" : "empty" %>">★</span>
+                    <% } %>
+                  </div>
+                </div>
+                <div class="book-info-l list-only">
+                  <p class="book-title-l"><%= book.title %></p>
+                  <p class="book-author-l"><%= book.author %></p>
+                  <p class="book-review-l"><%= book.review %></p>
+                </div>
+                <% if (book.genres[0]) { %>
+                  <div class="genre-tags-container list-only">
+                    <% for( let i = 0; i < 2; i++ ) { %>
+                      <% if (!book.genres[i]) { %>
+                        <% break %>
+                      <% } %>
+                      <span class="genre-tag-l"><%= book.genres[i].name %></span>
+                    <% } %>
+                    <% if (book.genres.length > 2) { %>
+                      <span class="genre-tag-l">+<%= book.genres.length - 2 %></span>
+                    <% } %>
+                  </div>
+                <% } %>
+                <div class="star-rating-l list-only">
+                  <% for( let i = 0; i < 5; i++ ) { %>
+                    <span class="star <%= i < book.rating ? "filled" : "empty" %>">★</span>
+                  <% } %>
+                </div>
+                <span class="book-date list-only"><%= book.getFormattedDate() %></span>
+              </button>
+            <% }) %>
+          <% } else { %>
+            <div class="empty-book-icon">
+              <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+                <path
+                d="M8 8.5C14.5 7.5 20 9 24 13v27c-4-4-9.5-5.5-16-4.5v-27Z"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinejoin="round"
+                />
+                <path
+                d="M40 8.5C33.5 7.5 28 9 24 13v27c4-4 9.5-5.5 16-4.5v-27Z"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinejoin="round"
+                />
+                <path
+                d="M13 15c3.5 0 6 .8 8 2.4M35 15c-3.5 0-6 .8-8 2.4"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                opacity=".55"
+                />
+              </svg>
+            </div>
+            <h3>No books here yet</h3>
+            <p>Start adding books to your library</p>
+            <button class="add-book-btn-js">Add your first book</button>
+          <% } %>
+        </div>
+      </main>
+
+      <footer>
+        <p>
+          "A reader lives a thousand lives before he dies." — George R.R. Martin
+        </p>
+      </footer>
+
+      <!-- Add/Edit Book -->
+      <dialog id="book-form-modal-js" class="modals">
+        <div class="toast-region-js toast-region"></div>
+        <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+          <symbol id="icon-pencil" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11.5 2.5a2.121 2.121 0 1 1 3 3L5 15H2v-3L11.5 2.5z" />
+          </symbol>
+        </svg>
+        <form id="book-form-js" class="modal-panel book-form-panel" action="/add" method="post">
+          <div class="book-form-header">
+            <div>
+              <p class="book-form-label">Your personal collection</p>
+              <h2 id="book-form-title-js"></h2>
+              <p class="book-form-description">
+                A place for the story, and what it meant to you.
+              </p>
+            </div>
+            <button type="button" class="close-modal-btn-js">✕</button>
+          </div>
+          <div class="book-form">
+            <aside class="book-form-aside">
+              <div class="book-form-aside-header">
+                <p>The edition</p>
+                <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+                  <path
+                    d="M8 8.5C14.5 7.5 20 9 24 13v27c-4-4-9.5-5.5-16-4.5v-27Z"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M40 8.5C33.5 7.5 28 9 24 13v27c4-4 9.5-5.5 16-4.5v-27Z"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M13 15c3.5 0 6 .8 8 2.4M35 15c-3.5 0-6 .8-8 2.4"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    opacity="0.55"
+                  />
+                </svg>
+              </div>
+              <div class="book-form-img-container">
+                <img
+                  id="book-form-img-js"
+                  class="form-cover-img"
+                  src=""
+                  alt="Cover preview"
+                />
+                <div class="form-cover-placeholder">
+                  <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+                    <path
+                      d="M8 8.5C14.5 7.5 20 9 24 13v27c-4-4-9.5-5.5-16-4.5v-27Z"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M40 8.5C33.5 7.5 28 9 24 13v27c4-4 9.5-5.5 16-4.5v-27Z"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M13 15c3.5 0 6 .8 8 2.4M35 15c-3.5 0-6 .8-8 2.4"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      opacity="0.55"
+                    />
+                  </svg>
+                  <p id="form-cover-title-js"></p>
+                  <p id="form-cover-author-js"></p>
+                </div>
+              </div>
+              <div>
+                <label class="form-field-label">ISBN <span>(cover)</span></label>
+                <div class="field-wrap">
+                  <input
+                    id="isbn-input-js"
+                    class="form-input-js"
+                    type="text"
+                    name="isbn"
+                    placeholder="9780061935466"
+                  />
+                  <button data-input-id="isbn" type="button" class="edit-field-btn-js edit-field-btn" title="Edit isbn" aria-label="Edit isbn">
+                    <svg width="14" height="14" aria-hidden="true"><use href="#icon-pencil" /></svg>
+                  </button>
+                </div>
+                <p class="isbn-hint">
+                  Add an ISBN to find the cover automatically. No cover? You can still
+                  save your book.
+                </p>
+              </div>
+              <!-- <div>
+                <strong>Cover unavailable.</strong> Check the ISBN or try again later.
+                This won’t stop you saving.
+              </div> -->
+            </aside>
+            <div class="book-form-fields-container">
+              <!-- <div role="alert" class="form-error">
+                <p></p>
+                <p>
+                  Your entry is still here. Complete the highlighted details to save.
+                </p>
+              </div> -->
+              <section>
+                <h3 class="form-section-title"><span>01</span> Book details</h3>
+                <div>
+                  <label class="form-field-label">Title <span>*</span></label>
+                  <div class="field-wrap">
+                    <input
+                      class="form-cover-detail-js form-input-js"
+                      type="text"
+                      name="title"
+                      placeholder="The name on the spine"
+                      required
+                    />
+                    <button data-input-id="title" type="button" class="edit-field-btn-js edit-field-btn" title="Edit title" aria-label="Edit title">
+                      <svg width="14" height="14" aria-hidden="true"><use href="#icon-pencil" /></svg>
+                    </button>
+                  </div>
+                </div>
+                <div>
+                  <label class="form-field-label">Author <span>*</span></label>
+                  <div class="field-wrap">
+                    <input
+                    class="form-cover-detail-js form-input-js"
+                    type="text"
+                    name="author"
+                    placeholder="Who wrote it?"
+                    required
+                    />
+                    <button data-input-id="author" type="button" class="edit-field-btn-js edit-field-btn" title="Edit author" aria-label="Edit author">
+                      <svg width="14" height="14" aria-hidden="true"><use href="#icon-pencil" /></svg>
+                    </button> 
+                  </div>
+                </div>
+                <div class="pages-date-grid">
+                  <div>
+                    <label class="form-field-label">Pages <span>*</span></label>
+                    <div class="field-wrap">
+                      <input
+                        class="form-input-js"
+                        type="number"
+                        min="0"
+                        step="1"
+                        name="pages"
+                        placeholder="336"
+                      />
+                      <input type="hidden" name="old_pages" value="" />
+                      <button data-input-id="pages" type="button" class="edit-field-btn-js edit-field-btn" title="Edit pages" aria-label="Edit pages">
+                        <svg width="14" height="14" aria-hidden="true"><use href="#icon-pencil" /></svg>
+                      </button>   
+                    </div>
+                  </div>
+                  <div>
+                    <label class="form-field-label">Date read</label>
+                    <div class="field-wrap">
+                      <input class="form-input-js" type="date" name="read_date" value=""/>
+                      <input type="hidden" name="old_read_date" value="" />
+                      <button data-input-id="read_date" type="button" class="edit-field-btn-js edit-field-btn" title="Edit read date" aria-label="Edit read date">
+                        <svg width="14" height="14" aria-hidden="true"><use href="#icon-pencil" /></svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </section>
+              <section class="form-section-divider">
+                <h3 class="form-section-title"><span>02</span> Your reading notes</h3>
+                <div>
+                  <p class="form-field-label">
+                    Genres <span class="genre-hint">choose one or more</span>
+                  </p>
+                  <div id="book-form-genres-js" class="book-form-genres" role="group">
+                    <% genres.forEach(genre => { %>
+                      <button data-genre-id="<%= genre.id %>" name="<%= genre.name %>" type="button" class="selected-genre-js"><%= genre.name %></button>
+                    <% }) %>
+                    <!-- <p>Create a category using Manage in your library first.</p> -->
+                  </div>
+                </div>
+                <div>
+                  <p class="form-field-label">Your rating </p>
+                  <div class="form-rating-row">
+                    <div class="set-star-rating" role="group">
+                      <input class="form-input-js" type="hidden" name="rating" value="" />
+                      <input type="hidden" name="old_rating" value="" />
+                      <button
+                        data-rating="5"
+                        type="button"
+                        class="star-btn-js star-btn"
+                      >
+                        <span class="empty">★</span>
+                      </button>
+                      <button
+                        data-rating="4"
+                        type="button"
+                        class="star-btn-js star-btn"
+                      >
+                        <span class="empty">★</span>
+                      </button>
+                      <button
+                        data-rating="3"
+                        type="button"
+                        class="star-btn-js star-btn"
+                      >
+                        <span class="empty">★</span>
+                      </button>
+                      <button
+                        data-rating="2"
+                        type="button"
+                        class="star-btn-js star-btn"
+                      >
+                        <span class="empty">★</span>
+                      </button>
+                      <button
+                        data-rating="1"
+                        type="button"
+                        class="star-btn-js star-btn"
+                      >
+                        <span class="empty">★</span>
+                      </button>
+                    </div>
+                    <span class="rating-description-js rating-description">What did you think?</span>
+                  </div>
+                </div>
+                <div>
+                  <label class="form-field-label">Review <span class="field-optional">optional</span></label>
+                  <textarea
+                    class="form-input-js"
+                    name="review"
+                    rows="4"
+                    placeholder="The passages, feelings, and ideas that stayed with you…"
+                  ></textarea>
+                </div>
+              </section>
+            </div>
+          </div>
+          <div class="book-form-footer">
+            <p class="book-form-hint"><span>*</span> Required fields</p>
+            <div class="book-form-footer-ctas">
+              <button class="close-modal-btn-js cancel-book-btn" type="button">Cancel</button>
+              <button class="save-book-btn-js save-book-btn" type="submit"></button>
+            </div>
+          </div>
+        </form>
+      </dialog>
+
+      <!-- Confirm Delete -->
+      <dialog id="confirm-delete-modal-js" class="modals">
+        <div class="modal-panel confirm-delete">
+          <div class="delete-book-icon">
+            <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+              <path
+                d="M8 8.5C14.5 7.5 20 9 24 13v27c-4-4-9.5-5.5-16-4.5v-27Z"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M40 8.5C33.5 7.5 28 9 24 13v27c4-4 9.5-5.5 16-4.5v-27Z"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M13 15c3.5 0 6 .8 8 2.4M35 15c-3.5 0-6 .8-8 2.4"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                opacity="0.55"
+              />
+            </svg>
+          </div>
+          <h3 class="delete-header">Remove this book</h3>
+          <p class="delete-book-js delete-book">A Game of Thrones</p>
+          <p class="delete-description">
+            This will permanently remove it from your library
+          </p>
+          <div class="delete-ctas">
+            <form id="delete-form" action="/delete/:id" method="post"><input type="hidden" name="deleteId" value="" /></form>
+            <button class="keep-book-btn-js keep-book-btn">Keep it</button>
+            <button type="submit" form="delete-form" class="delete-book-btn">Remove</button>
+          </div>
+        </div>
+      </dialog>
+
+      <!-- Genre Manager -->
+      <dialog id="genre-manager-modal-js" class="modals">
+        <div class="toast-region-js toast-region"></div>
+        <div class="modal-panel genre-manager-panel">
+          <div class="genre-manager-header">
+            <h2>Manage Genres</h2>
+            <button type="button" class="close-modal-btn-js">✕</button>
+          </div>
+          <div class="genre-manager-body">
+            <div class="add-genre">
+              <label>New Genre</label>
+              <form id="genre-form-js" action="/add-genre" method="post" class="add-genre-form">
+                <input
+                  type="text"
+                  name="genre"
+                  placeholder="e.g. Classics, Graphic Novels…"
+                />
+                <button type="submit">Add</button>
+              </form>
+              <p class="genre-error-js genre-error"><span>!</span>Already exists</p>
+            </div>
+            <div class="genre-list-js genre-list">
+              <% genres.forEach(genre => { %>
+                <div class="genre-item-js genre-item">
+                  <span><%= genre.name %></span>
+                  <button data-genre-id="<%= genre.id %>" data-genre-name="<%= genre.name %>" type="button" class="delete-genre-js">Remove</button>
+                </div>
+              <% }) %>
+            </div>
+          </div>
+          <div class="genre-manager-footer">
+            <button type="button" class="close-modal-btn-js">Done</button>
+          </div>
+        </div>
+      </dialog>
+
+      <!--Book Detail -->
+      <dialog id="book-detail-modal-js" class="modals">
+        <div class="modal-panel book-detail-panel">
+          <div class="book-detail-hero">
+            <div class="detail-hero-orb"></div>
+            <button type="button" class="detail-close-btn close-modal-btn-js">✕</button>
+            <img id="book-cover-js" class="book-detail-cover" src="" alt="" />
+            <div class="img-error-js detail-img-error-icon">
+              <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+                  <path
+                    d="M8 8.5C14.5 7.5 20 9 24 13v27c-4-4-9.5-5.5-16-4.5v-27Z"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M40 8.5C33.5 7.5 28 9 24 13v27c4-4 9.5-5.5 16-4.5v-27Z"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M13 15c3.5 0 6 .8 8 2.4M35 15c-3.5 0-6 .8-8 2.4"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    opacity="0.55"
+                  />
+                </svg>
+            </div>
+            <div id="book-detail-genre-wrapper-js" class="detail-genre-tag-container"></div>
+          </div>
+          <div class="book-detail">
+            <div>
+              <h2 id="book-detail-title-js" class="book-detail-title"></h2>
+              <p id="book-detail-author-js" class="book-detail-author"></p>
+            </div>
+            <div class="book-detail-meta">
+              <div id="book-rating-js" class="book-rating"></div>
+              <span id="book-detail-date-js">Read May 10, 2024</span>
+              <span id="book-detail-pages-js"></span>
+            </div>
+            <div id="detail-review-container-js" class="detail-review-container show">
+              <p id="book-detail-review-js" class="book-detail-review"></p>
+            </div>
+            <div class="book-detail-ctas">
+              <button data-book-id="" id="edit-book-btn-js" class="edit-review-btn">Edit Review</button>
+              <button data-book-id="" data-book-title="" id="remove-book-btn-js" class="remove-book-btn">Remove</button>
+            </div>
+          </div>
+        </div>
+      </dialog>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>

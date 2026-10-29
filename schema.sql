@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS books (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  author VARCHAR(100) NOT NULL,
+  isbn VARCHAR(20),
+  rating INTEGER,
+  review TEXT,
+  read_date DATE,
+  pages INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS genres (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS book_genre (
+  book_id INTEGER NOT NULL REFERENCES books(id) ON DELETE CASCADE,
+  genre_id INTEGER NOT NULL REFERENCES genres(id) ON DELETE CASCADE,
+  PRIMARY KEY (book_id, genre_id)
+);
