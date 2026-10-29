@@ -1,7 +1,12 @@
 import "dotenv/config";
 import bodyParser from "body-parser";
+import ejs from "ejs";
 import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 import pg from "pg";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -17,6 +22,10 @@ const db = new pg.Pool({
   ssl: isProduction ? { rejectUnauthorized: false } : false,
   max: 3,
 });
+
+app.engine("ejs", ejs.renderFile);
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
