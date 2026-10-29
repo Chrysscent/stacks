@@ -10,9 +10,11 @@ if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL is required. Set it in your .env file.");
 }
 
+const isProduction = !!process.env.VERCEL;
+
 const db = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false },
+  ssl: isProduction ? { rejectUnauthorized: false } : false,
   max: 3,
 });
 
@@ -172,13 +174,13 @@ app.delete("/delete-genre/:id", async (req, res) => {
   res.json(result.rows[0]);
 });
 
-if (process.env.VERCEL) {
-  module.exports = app;
-} else {
+if (!process.env.VERCEL) {
   app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
   });
 }
+
+export default app;
 
 const shutdown = async (signal) => {
   console.log(`Received ${signal}. Draining database pool connection cache...`);
