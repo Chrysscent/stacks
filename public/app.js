@@ -177,7 +177,9 @@ genreList.addEventListener("click", async (event) => {
       : `${name} was removed.`,
   );
   genreChipsContainer.querySelector(`button[name="${name}"]`).remove();
-  genreChipsContainer.querySelector(`button[name="all"]`).classList.add("active");
+  genreChipsContainer
+    .querySelector(`button[name="all"]`)
+    .classList.add("active");
   formGenresWrapper.querySelector(`button[name="${name}"]`).remove();
   uiRenderer();
 });
@@ -780,7 +782,7 @@ function updateHeroBook(book) {
   if (document.querySelector(".genre-js.active" !== "all")) return;
 
   if (!book) {
-    document.getElementById("hero-book-container-js").remove();
+    document.getElementById("hero-book-container-js")?.remove();
     return;
   }
 
@@ -798,7 +800,7 @@ function updateHeroBook(book) {
   for (let i = 0; i < 5; i++) {
     heroStarRatingHtml += `<span class="star ${i < book.rating ? "filled" : "empty"}">★</span>`;
   }
-  heroBookImgError.style.display = "none"
+  heroBookImgError.style.display = "none";
   heroBookImg.style.display = "inline";
   heroBookImg.src = `https://covers.openlibrary.org/b/isbn/${book.isbn}-L.jpg?default=false`;
   heroBookTitle.textContent = book.title;
@@ -857,17 +859,14 @@ async function uiRenderer(update = false, genre = null, order = null) {
 
   const quantifier = books.length !== 1 ? "books" : "book";
 
-  if (
-    !document.getElementById("hero-book-container-js") &&
-    activeGenre === "all"
-  ) {
+  if (!document.getElementById("hero-book-container-js") && books.length > 0) {
     let starRatingHtml = "";
 
     for (let i = 0; i < 5; i++) {
       starRatingHtml += `<span class="star ${i < books[0].rating ? "filled" : "empty"}">★</span>`;
     }
     const heroBookHtml = `
-      <div id="hero-book-container-js" class="hero-book-container show">
+      <div id="hero-book-container-js" class="hero-book-container ${activeGenre === "all" ? "show" : ""}">
         <div class="hero-glow">
           <div class="hero-orb-1"></div>
           <div class="hero-orb-2"></div>
